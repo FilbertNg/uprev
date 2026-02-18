@@ -7,7 +7,7 @@ router = APIRouter()
 
 TEMPLATES = {
     "schedule": (
-        "Halo Tim UpRev 👋\n"
+        "Halo Tim UpRev\n"
         "Saya tertarik untuk diskusi mengenai solusi digital/AI untuk bisnis saya.\n"
         "Boleh diinfokan jadwal konsultasi yang tersedia minggu ini? Terima kasih."
     )
