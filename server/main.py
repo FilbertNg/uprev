@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from config import settings
-from api import meet
+from api.meet import router as meet_router
 
 app = FastAPI()
 
@@ -20,7 +20,7 @@ async def health_check():
     return {"status": "ok"}
 
 # Include Routers
-app.include_router(meet.router)
+app.include_router(meet_router, prefix="/api", tags=["meet"])
 
 if __name__ == "__main__":
     import uvicorn
