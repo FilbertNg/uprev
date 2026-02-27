@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+@theme {
+  --color-carbon: #1A1A1A;
+  --color-smoke: #F5F5F5;
+  --color-muted: #A3A3A3;
+  --color-tiger-flame: #FF5722;
+  --color-surface: #222222;
+  --color-border-light: #333333;
+
+  --font-display: "Plus Jakarta Sans", sans-serif;
+  --font-body: "Inter", sans-serif;
+
+  --ease-uprev: cubic-bezier(0.25, 1, 0.5, 1);
+
+  --animate-fade-up: fade-up 0.5s var(--ease-uprev) forwards;
+  --animate-scale-fade-in: scale-fade-in 0.15s ease-out forwards;
+  --animate-ripple: ripple 2s ease-out infinite;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scale-fade-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95) translateY(-10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  @keyframes ripple {
+    0% {
+      box-shadow: 0 0 0 0 rgba(255, 87, 34, 0.4);
+    }
+
+    70% {
+      box-shadow: 0 0 0 20px rgba(255, 87, 34, 0);
+    }
+
+    100% {
+      box-shadow: 0 0 0 0 rgba(255, 87, 34, 0);
+    }
+  }
+
+  --animate-globe-spin: globe-spin 30s linear infinite;
+  --animate-dot-pulse: dot-pulse 2s ease-in-out infinite;
+
+  @keyframes globe-spin {
+    from {
+      transform: rotate(0deg);
+    }
+
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes dot-pulse {
+
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgba(255, 87, 34, 0.6);
+    }
+
+    50% {
+      box-shadow: 0 0 12px 6px rgba(255, 87, 34, 0);
+    }
+  }
+}
+
+@layer base {
+  body {
+    background-color: var(--color-carbon);
+    color: var(--color-smoke);
+    font-family: var(--font-body);
+    /* For custom cursor support */
+    cursor: none;
+  }
+
+  /* Disable custom cursor on touch devices */
+  @media (pointer: coarse) {
+    body {
+      cursor: auto;
+    }
+  }
+}

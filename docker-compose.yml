@@ -1,13 +1,11 @@
 services:
   frontend:
     build:
-      context: .
+      context: ./frontend
       dockerfile: Dockerfile
     ports:
       - "3002:3000"
-    volumes:
-      - ./index.html:/app/index.html
-      - ./404.html:/app/404.html
+    restart: unless-stopped
 
   backend:
     build:
@@ -17,4 +15,4 @@ services:
       - "8001:8000"
     env_file:
       - server/.env
-    restart: always
+    restart: unless-stopped
