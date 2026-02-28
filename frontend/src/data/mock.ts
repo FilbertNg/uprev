@@ -10,7 +10,7 @@ export const navLinks: NavLink[] = [
             { id: "prod-1", labelId: "Intelligent AI CS", labelEn: "Intelligent AI CS", href: "/products/ai-cs", icon: "Sparkles", descId: "Automasi layanan pelanggan 24/7 & penutupan sales.", descEn: "Automate 24/7 customer service & sales closing." },
             { id: "prod-2", labelId: "Automated Smart CRM", labelEn: "Automated Smart CRM", href: "/products/smart-crm", icon: "BarChart3", descId: "Pusat kendali data & retensi pelanggan otomatis.", descEn: "Automated data control & customer retention center." },
             { id: "prod-3", labelId: "High-Performance Website", labelEn: "High-Performance Website", href: "/products/website", icon: "Globe", descId: "Etalase digital premium terintegrasi AI.", descEn: "AI-integrated premium digital storefront." },
-            { id: "prod-4", labelId: "Custom AI Integration", labelEn: "Custom AI Integration", href: "/404", icon: "Zap", descId: "Solusi AI tailor-made untuk skala korporat.", descEn: "Tailor-made AI solutions for corporate scale." },
+            { id: "prod-4", labelId: "Custom AI Integration", labelEn: "Custom AI Integration", href: "/products/custom-ai", icon: "Zap", descId: "Solusi AI tailor-made untuk skala korporat.", descEn: "Tailor-made AI solutions for corporate scale." },
         ],
     },
     { id: "nav-studi", labelId: "Studi Kasus", labelEn: "Case Studies", href: "/404" },
