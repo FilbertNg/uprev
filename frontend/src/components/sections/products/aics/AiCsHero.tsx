@@ -116,7 +116,7 @@ export function AiCsHero() {
                                         {bubble.text}
                                         {bubble.hasPaymentLink && (
                                             <a href="#" className="inline-flex items-center gap-1.5 mt-1.5 font-mono text-[10.5px] bg-black/30 text-white px-3 py-1.5 rounded-lg border border-white/20 hover:bg-black/50 transition-colors animate-pulse shadow-lg">
-                                                <span className="font-bold tracking-wide">[Link Pembayaran]</span>
+                                                <span className="font-bold tracking-wide">[💳 Pay Invoice]</span>
                                             </a>
                                         )}
                                     </motion.div>
