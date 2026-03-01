@@ -64,21 +64,21 @@ def _format_addon(addon: UpRevAddOn) -> str:
 
 @tool
 async def search_uprev_packages(query: str) -> str:
-    """Cari paket website UpRev yang cocok dengan kebutuhan klien menggunakan semantic similarity.
+    """Cari paket website UpRev yang paling cocok dengan kebutuhan klien.
+
+    Selalu mengembalikan 2 paket paling relevan beserta skor kemiripan.
+    Kamu yang menentukan apakah hasilnya cocok atau tidak berdasarkan konteks percakapan.
 
     Args:
         query: Deskripsi kebutuhan klien dalam Bahasa Indonesia, misalnya 'website toko online untuk jualan baju'.
 
     Returns:
-        Daftar paket yang cocok beserta harga dan detail.
-        Jika tidak ada hasil yang relevan, semua paket akan ditampilkan.
+        2 paket teratas berdasarkan relevansi beserta detail lengkap.
     """
     try:
-        # Generate embedding for the query
         query_vector = await embeddings_client.aembed_query(query)
 
         async with async_session_factory() as session:
-            # Cosine similarity search: order by distance ascending (closest first)
             result = await session.execute(
                 text("""
                     SELECT id, name, description, build_price, maintenance_price,
@@ -87,40 +87,29 @@ async def search_uprev_packages(query: str) -> str:
                     FROM uprev_packages
                     WHERE embedding IS NOT NULL
                     ORDER BY distance ASC
-                    LIMIT 3
+                    LIMIT 2
                 """),
                 {"query_vec": str(query_vector)},
             )
             rows = result.fetchall()
 
-            # If top results have high distance (>0.5), they may not be relevant
-            if rows and rows[0].distance < 0.5:
-                lines = []
-                for row in rows:
-                    if row.distance < 0.6:
-                        lines.append(
-                            f"ID: {row.id}\n"
-                            f"📦 **{row.name}** (relevance: {1 - row.distance:.0%})\n"
-                            f"   Description: {row.description}\n"
-                            f"   Build Price: {row.build_price}\n"
-                            f"   Maintenance: {row.maintenance_price}/mo\n"
-                            f"   Migration: {row.migration_price}\n"
-                            f"   Best For: {', '.join(row.best_for) if row.best_for else 'General'}\n"
-                            f"   Selling Points: {'; '.join(row.selling_sentences) if row.selling_sentences else 'N/A'}\n"
-                        )
-                if lines:
-                    return "\n".join(lines)
-
-            # Fallback: return ALL packages so the agent can manually evaluate
-            all_result = await session.execute(select(UpRevPackage))
-            packages = all_result.scalars().all()
-
-            if not packages:
+            if not rows:
                 return "Belum ada paket tersedia di database kami."
 
-            lines = ["⚠️ Tidak ditemukan kecocokan semantik. Berikut semua paket yang tersedia:\n"]
-            for pkg in packages:
-                lines.append(_format_package(pkg))
+            lines = []
+            for rank, row in enumerate(rows, 1):
+                relevance = 1 - row.distance
+                lines.append(
+                    f"Rank #{rank} (relevansi: {relevance:.0%})\n"
+                    f"ID: {row.id}\n"
+                    f"📦 **{row.name}**\n"
+                    f"   Deskripsi: {row.description}\n"
+                    f"   Harga Pembuatan: {row.build_price}\n"
+                    f"   Maintenance: {row.maintenance_price}/bulan\n"
+                    f"   Migrasi: {row.migration_price}\n"
+                    f"   Cocok Untuk: {', '.join(row.best_for) if row.best_for else 'Umum'}\n"
+                    f"   Poin Penjualan: {'; '.join(row.selling_sentences) if row.selling_sentences else '-'}\n"
+                )
             return "\n".join(lines)
 
     except Exception as e:
