@@ -1,7 +1,8 @@
 """
 Background tasks:
   1. sync_scratchpad_to_db – writes customer_profile fields into the customers table.
-  2. cleanup_expired_threads – APScheduler job to prune unpaid threads older than 24 hours.
+  2. cleanup_expired_threads – APScheduler job to prune unpaid threads older than 24 hours,
+     including their LangGraph checkpoint data.
 """
 
 from __future__ import annotations
@@ -9,8 +10,9 @@ from __future__ import annotations
 import logging
 from datetime import datetime, timedelta, timezone
 
-from sqlalchemy import delete, select, update
+from sqlalchemy import delete, select, text, update
 
+from core.config import settings
 from db.database import async_session_factory
 from db.models import ChatThread, Customer
 
@@ -81,19 +83,49 @@ async def sync_scratchpad_to_db(
 # ── 2. 24-Hour TTL Cleanup ──────────────────────────────────────────────────
 
 async def cleanup_expired_threads() -> None:
-    """Delete chat_threads older than 24 hours WHERE payment_successful = False."""
+    """Delete chat_threads older than 24 hours WHERE payment_successful = False.
+    
+    Also purges the corresponding LangGraph checkpoint data from the
+    internal checkpoint tables (checkpoints, checkpoint_blobs, checkpoint_writes)
+    to prevent database bloat.
+    """
     cutoff = datetime.now(timezone.utc) - timedelta(hours=24)
     try:
         async with async_session_factory() as session:
+            # 1. Find expired thread IDs first
             result = await session.execute(
+                select(ChatThread.thread_id).where(
+                    ChatThread.created_at < cutoff,
+                    ChatThread.payment_successful == False,  # noqa: E712
+                )
+            )
+            expired_ids = [str(row[0]) for row in result.fetchall()]
+
+            if not expired_ids:
+                return
+
+            # 2. Delete LangGraph checkpoint data for expired threads
+            # These are the internal tables created by AsyncPostgresSaver.setup()
+            for table in ["checkpoint_writes", "checkpoint_blobs", "checkpoints"]:
+                try:
+                    await session.execute(
+                        text(f"DELETE FROM {table} WHERE thread_id = ANY(:ids)"),
+                        {"ids": expired_ids},
+                    )
+                except Exception as e:
+                    # Table may not exist yet if checkpointer was never used
+                    logger.debug("Could not clean %s: %s", table, e)
+
+            # 3. Delete the chat_threads rows
+            await session.execute(
                 delete(ChatThread).where(
                     ChatThread.created_at < cutoff,
                     ChatThread.payment_successful == False,  # noqa: E712
                 )
             )
-            deleted = result.rowcount
+
             await session.commit()
-            if deleted:
-                logger.info("Cleaned up %d expired chat threads", deleted)
+            logger.info("Cleaned up %d expired threads (including checkpoints)", len(expired_ids))
+
     except Exception as e:
         logger.error("cleanup_expired_threads failed: %s", e)

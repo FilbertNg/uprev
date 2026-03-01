@@ -33,7 +33,7 @@ async def create_package(
             maintenance_price=payload.maintenance_price,
             migration_price=payload.migration_price,
             best_for=payload.best_for,
-            upselling_sentences=payload.upselling_sentences,
+            selling_sentences=payload.selling_sentences,
         )
         db.add(package)
         await db.flush()
