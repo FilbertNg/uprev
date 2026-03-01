@@ -64,3 +64,6 @@ AI Concierge adalah chatbot pintar yang dilatih khusus dengan data bisnis klien.
 - Eskalasi ke tim manusia jika diperlukan
 
 Biaya: Rp 3.500.000 (sekali bayar untuk setup) + Rp 899.000/bulan untuk maintenance dan AI usage.
+
+## Apakah UpRev menyediakan CRM?
+Saat ini, layanan CRM (Customer Relationship Management) masih dalam tahap pengembangan dan termasuk dalam roadmap produk masa depan UpRev. Kami berkomitmen untuk menghadirkan solusi CRM yang terintegrasi dengan ekosistem layanan kami. Apabila Anda tertarik untuk mengetahui lebih lanjut mengenai rencana pengembangan CRM kami, kami dengan senang hati mempersilakan Anda untuk menghubungi tim kami melalui WhatsApp agar dapat berdiskusi lebih detail mengenai fitur dan timeline ketersediaannya.

@@ -60,7 +60,7 @@ async def lifespan(app: FastAPI):
         replace_existing=True,
     )
     scheduler.start()
-    logger.info("✅ APScheduler started (thread cleanup every 1 hour)")
+    logger.info("✅ APScheduler started (thread cleanup every 24 hour)")
 
     yield
 

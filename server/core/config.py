@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     # ── FastAPI ──────────────────────────────────────────────
     ALLOW_ORIGINS: list[str] = ["*"]
     PHONE_NUMBER: str = ""
+    APP_URL: str = "http://localhost:3002"  # Frontend base URL (for payment redirects)
 
     # ── PostgreSQL ──────────────────────────────────────────
     DATABASE_URL: str  # e.g. postgresql+asyncpg://user:pass@host:5432/db

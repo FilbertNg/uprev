@@ -64,14 +64,14 @@ def _format_addon(addon: UpRevAddOn) -> str:
 
 @tool
 async def search_uprev_packages(query: str) -> str:
-    """Search the UpRev packages database for products matching the user's needs using semantic similarity.
+    """Cari paket website UpRev yang cocok dengan kebutuhan klien menggunakan semantic similarity.
 
     Args:
-        query: Natural-language description of what the client is looking for.
+        query: Deskripsi kebutuhan klien dalam Bahasa Indonesia, misalnya 'website toko online untuk jualan baju'.
 
     Returns:
-        Formatted string with matching packages, pricing, and selling points.
-        If no semantically relevant results, returns all available packages so you can evaluate manually.
+        Daftar paket yang cocok beserta harga dan detail.
+        Jika tidak ada hasil yang relevan, semua paket akan ditampilkan.
     """
     try:
         # Generate embedding for the query
@@ -116,9 +116,9 @@ async def search_uprev_packages(query: str) -> str:
             packages = all_result.scalars().all()
 
             if not packages:
-                return "No packages found in our database yet. Please check back later."
+                return "Belum ada paket tersedia di database kami."
 
-            lines = ["⚠️ No strong semantic match found. Here are ALL available packages:\n"]
+            lines = ["⚠️ Tidak ditemukan kecocokan semantik. Berikut semua paket yang tersedia:\n"]
             for pkg in packages:
                 lines.append(_format_package(pkg))
             return "\n".join(lines)
@@ -132,13 +132,13 @@ async def search_uprev_packages(query: str) -> str:
 
 @tool
 async def search_addons(query: str) -> str:
-    """Search the UpRev add-ons database for supplementary products to upsell.
+    """Cari add-on UpRev yang cocok untuk upselling kepada klien.
 
     Args:
-        query: Natural-language description of what add-on would benefit the client.
+        query: Deskripsi kebutuhan add-on dalam Bahasa Indonesia, misalnya 'chatbot AI untuk customer service'.
 
     Returns:
-        Formatted string with matching add-ons.
+        Daftar add-on yang cocok beserta detail dan harga.
     """
     try:
         query_vector = await embeddings_client.aembed_query(query)
@@ -159,7 +159,7 @@ async def search_addons(query: str) -> str:
             rows = result.fetchall()
 
             if not rows:
-                return "No add-ons available at the moment."
+                return "Belum ada add-on yang tersedia saat ini."
 
             lines = []
             for row in rows:
@@ -181,18 +181,19 @@ async def search_addons(query: str) -> str:
 
 @tool
 async def get_context(query: str) -> str:
-    """Search UpRev's internal knowledge base for answers to general questions.
+    """Cari jawaban dari knowledge base internal UpRev untuk pertanyaan umum.
 
-    Use this tool when the user asks about things like:
-    - What does maintenance cost cover?
-    - What is UpRev's process?
-    - How long does development take?
+    Gunakan tool ini ketika pengguna bertanya tentang:
+    - Apa saja yang termasuk biaya maintenance?
+    - Bagaimana proses kerja UpRev?
+    - Berapa lama waktu pengerjaan?
+    - Apa itu CRM?
 
     Args:
-        query: The question to look up in UpRev's knowledge base.
+        query: Pertanyaan dalam Bahasa Indonesia untuk dicari di knowledge base UpRev.
 
     Returns:
-        Relevant context passages from UpRev's company knowledge base.
+        Konteks yang relevan dari knowledge base perusahaan UpRev.
     """
     try:
         query_vector = await embeddings_client.aembed_query(query)
@@ -211,7 +212,7 @@ async def get_context(query: str) -> str:
             rows = result.fetchall()
 
             if not rows or rows[0].distance > 0.6:
-                return "No matching context found in our knowledge base for this question."
+                return "Tidak ditemukan konteks yang relevan di knowledge base kami untuk pertanyaan ini."
 
             chunks = []
             for row in rows:
@@ -219,7 +220,7 @@ async def get_context(query: str) -> str:
                     chunks.append(row.content)
 
             if not chunks:
-                return "No matching context found in our knowledge base for this question."
+                return "Tidak ditemukan konteks yang relevan di knowledge base kami untuk pertanyaan ini."
 
             return "\n---\n".join(chunks)
 
@@ -271,7 +272,18 @@ async def generate_payment_link(
             tx_id = str(tx.id)
             await session.commit()
 
-        # 2. Create Xendit invoice
+        # 2. Create Xendit invoice with redirect URLs
+        import urllib.parse as _urlparse
+
+        frontend_url = settings.APP_URL.rstrip("/")
+        redirect_params = _urlparse.urlencode({
+            "tx_id": tx_id,
+            "pkg": description,
+            "name": customer_name,
+        })
+        success_url = f"{frontend_url}/payment/success?{redirect_params}"
+        failure_url = f"{frontend_url}/payment/failed?{redirect_params}"
+
         payload = {
             "external_id": tx_id,
             "amount": total_amount,
@@ -282,6 +294,8 @@ async def generate_payment_link(
                 "given_names": customer_name,
                 "email": customer_email,
             },
+            "success_redirect_url": success_url,
+            "failure_redirect_url": failure_url,
         }
 
         async with httpx.AsyncClient() as client:

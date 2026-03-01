@@ -1,6 +1,10 @@
 """
 Xendit webhook listener.
 Validates the Callback Verification Token and updates transaction + thread status.
+
+Supports both Xendit webhook formats:
+  - New (Payment Request API): event at top level, data nested under `data`
+  - Legacy (Invoices API): `external_id` and `status` at top level
 """
 
 from __future__ import annotations
@@ -16,6 +20,31 @@ from db.models import ChatThread, Transaction, TransactionStatus
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
+
+
+def _parse_webhook_body(body: dict) -> tuple[str | None, str | None]:
+    """Extract (reference_id, status) from either Xendit webhook format.
+
+    New format (Payment Request API):
+        { "event": "payment.succeeded", "data": { "reference_id": "...", "status": "SUCCEEDED" } }
+
+    Legacy format (Invoices API):
+        { "external_id": "...", "status": "PAID" }
+
+    Returns:
+        (reference_id, status_string) — either may be None if not found.
+    """
+    # ── New format: top-level `event` + nested `data` ────────────────────
+    if "event" in body and "data" in body:
+        data = body["data"]
+        reference_id = data.get("reference_id")
+        status = data.get("status", "").upper()
+        return reference_id, status
+
+    # ── Legacy format: top-level `external_id` + `status` ────────────────
+    external_id = body.get("external_id")
+    status = body.get("status", "").upper()
+    return external_id, status
 
 
 @router.post("/webhooks/xendit")
@@ -38,31 +67,30 @@ async def xendit_webhook(
     except Exception:
         raise HTTPException(status_code=400, detail="Invalid JSON body")
 
-    external_id = body.get("external_id")  # Our transaction UUID
-    status_raw = body.get("status", "").upper()
+    reference_id, status_raw = _parse_webhook_body(body)
 
-    if not external_id:
-        raise HTTPException(status_code=400, detail="Missing external_id")
+    if not reference_id:
+        raise HTTPException(status_code=400, detail="Missing reference_id / external_id")
 
-    # Map Xendit statuses
-    if status_raw in ("PAID", "SETTLED"):
+    # Map Xendit statuses (covers both old and new formats)
+    if status_raw in ("PAID", "SETTLED", "SUCCEEDED"):
         new_status = TransactionStatus.PAID
     elif status_raw in ("EXPIRED", "FAILED"):
         new_status = TransactionStatus.FAILED
     else:
         # Unknown status – log but acknowledge
-        logger.info("Xendit webhook unknown status '%s' for %s", status_raw, external_id)
+        logger.info("Xendit webhook unknown status '%s' for %s", status_raw, reference_id)
         return {"status": "ignored"}
 
     # ── 3. Update transaction ────────────────────────────────────────────────
     try:
         async with async_session_factory() as session:
             result = await session.execute(
-                select(Transaction).where(Transaction.id == external_id)
+                select(Transaction).where(Transaction.id == reference_id)
             )
             tx = result.scalar_one_or_none()
             if not tx:
-                logger.warning("Transaction not found for external_id=%s", external_id)
+                logger.warning("Transaction not found for reference_id=%s", reference_id)
                 raise HTTPException(status_code=404, detail="Transaction not found")
 
             tx.status = new_status
@@ -78,7 +106,7 @@ async def xendit_webhook(
             await session.commit()
             logger.info(
                 "Transaction %s updated to %s via Xendit webhook",
-                external_id,
+                reference_id,
                 new_status.value,
             )
 
