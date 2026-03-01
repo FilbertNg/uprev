@@ -1,6 +1,6 @@
-import { useReducer, useEffect } from "react";
-import { ChatMessage, SendMessagePayload } from "@/types";
-import { sendChatMessage } from "@/lib/api";
+import { useReducer, useEffect, useCallback } from "react";
+import { ChatMessage } from "@/types";
+import { sendChatMessage, getChatHistory } from "@/lib/api";
 import { registerChatOpener, unregisterChatOpener } from "@/lib/chatOpener";
 
 export type ChatStatus = "idle" | "loading" | "typing" | "error" | "ready";
@@ -10,7 +10,7 @@ export interface ChatState {
     status: ChatStatus;
     messages: ChatMessage[];
     errorMessage: string | null;
-    sessionId: string;
+    historyLoaded: boolean;
 }
 
 type ChatAction =
@@ -19,39 +19,22 @@ type ChatAction =
     | { type: "SEND_MESSAGE"; payload: ChatMessage }
     | { type: "SET_TYPING" }
     | { type: "RECEIVE_MESSAGE"; payload: ChatMessage }
-    | { type: "RESET_GREETING"; payload: ChatMessage }
+    | { type: "LOAD_HISTORY"; payload: ChatMessage[] }
     | { type: "SET_ERROR"; payload: string }
     | { type: "CLEAR_ERROR" };
-
-const DEFAULT_GREETING = "Halo! 👋 Saya asisten AI UpRev. Ada yang bisa saya bantu tentang layanan kami?";
 
 const initialState: ChatState = {
     isOpen: false,
     status: "idle",
     messages: [],
     errorMessage: null,
-    sessionId: typeof window !== "undefined" ? crypto.randomUUID() : "",
+    historyLoaded: false,
 };
 
 function chatReducer(state: ChatState, action: ChatAction): ChatState {
     switch (action.type) {
-        case "TOGGLE_OPEN": {
-            const opening = !state.isOpen;
-            // When floating button opens chat and it's empty, inject default greeting
-            if (opening && state.messages.length === 0) {
-                return {
-                    ...state,
-                    isOpen: true,
-                    messages: [{
-                        id: "greeting-1",
-                        role: "assistant",
-                        content: DEFAULT_GREETING,
-                        timestamp: Date.now(),
-                    }],
-                };
-            }
-            return { ...state, isOpen: opening };
-        }
+        case "TOGGLE_OPEN":
+            return { ...state, isOpen: !state.isOpen };
         case "SET_OPEN":
             return { ...state, isOpen: action.payload };
         case "SEND_MESSAGE":
@@ -69,11 +52,12 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
                 status: "ready",
                 messages: [...state.messages, action.payload],
             };
-        case "RESET_GREETING":
+        case "LOAD_HISTORY":
             return {
                 ...state,
                 status: "ready",
-                messages: [action.payload],
+                messages: action.payload,
+                historyLoaded: true,
             };
         case "SET_ERROR":
             return { ...state, status: "error", errorMessage: action.payload };
@@ -87,31 +71,31 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
 export function useChatState() {
     const [state, dispatch] = useReducer(chatReducer, initialState);
 
-    useEffect(() => {
-        // Generate session ID on mount if it wasn't generated during SSR
-        if (!state.sessionId) {
-            initialState.sessionId = crypto.randomUUID();
+    // Load chat history from backend on first open
+    const loadHistory = useCallback(async () => {
+        if (state.historyLoaded) return;
+        try {
+            const { messages } = await getChatHistory();
+            dispatch({ type: "LOAD_HISTORY", payload: messages });
+        } catch (error) {
+            console.error("Failed to load chat history:", error);
+            // If history fails, still mark as loaded so we don't retry endlessly
+            dispatch({ type: "LOAD_HISTORY", payload: [] });
         }
-    }, [state.sessionId]);
+    }, [state.historyLoaded]);
+
+    // Load history when chat is first opened
+    useEffect(() => {
+        if (state.isOpen && !state.historyLoaded) {
+            loadHistory();
+        }
+    }, [state.isOpen, state.historyLoaded, loadHistory]);
 
     // Register global chat opener callback for CTA buttons
     useEffect(() => {
         registerChatOpener((aiGreeting?: string) => {
             dispatch({ type: "SET_OPEN", payload: true });
-            if (aiGreeting) {
-                dispatch({ type: "SET_TYPING" });
-                setTimeout(() => {
-                    dispatch({
-                        type: "RESET_GREETING",
-                        payload: {
-                            id: crypto.randomUUID(),
-                            role: "assistant",
-                            content: aiGreeting,
-                            timestamp: Date.now(),
-                        },
-                    });
-                }, 800);
-            }
+            // Greeting is now loaded from backend history, no need to locally inject
         });
         return () => unregisterChatOpener();
     }, []);
@@ -119,7 +103,7 @@ export function useChatState() {
     const toggleChat = () => dispatch({ type: "TOGGLE_OPEN" });
     const openChat = () => dispatch({ type: "SET_OPEN", payload: true });
 
-    const sendMessage = async (text: string, productId?: string) => {
+    const sendMessage = async (text: string) => {
         if (!text.trim()) return;
 
         const userMsg: ChatMessage = {
@@ -131,20 +115,13 @@ export function useChatState() {
 
         dispatch({ type: "SEND_MESSAGE", payload: userMsg });
 
-        // Move to typing state shortly after sending
+        // Show typing indicator
         setTimeout(() => {
             dispatch({ type: "SET_TYPING" });
-        }, 500);
+        }, 300);
 
         try {
-            const payload: SendMessagePayload = {
-                sessionId: state.sessionId,
-                message: text,
-                locale: "id", // Assuming id for now based on context
-                context: productId ? { productId } : undefined,
-            };
-
-            const reply = await sendChatMessage(payload);
+            const reply = await sendChatMessage(text);
             dispatch({ type: "RECEIVE_MESSAGE", payload: reply });
         } catch (error) {
             dispatch({ type: "SET_ERROR", payload: "Koneksi terputus. Silakan coba lagi." });

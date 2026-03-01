@@ -99,6 +99,7 @@ async def search_uprev_packages(query: str) -> str:
                 for row in rows:
                     if row.distance < 0.6:
                         lines.append(
+                            f"ID: {row.id}\n"
                             f"📦 **{row.name}** (relevance: {1 - row.distance:.0%})\n"
                             f"   Description: {row.description}\n"
                             f"   Build Price: {row.build_price}\n"

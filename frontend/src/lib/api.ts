@@ -1,14 +1,69 @@
 import {
     ContactFormPayload,
     ContactFormResponse,
-    SendMessagePayload,
     ChatMessage,
     Testimonial,
     ProductCard,
 } from "../types";
-import { testimonials, products, MOCK_REPLIES } from "../data/mock";
+import { testimonials, products } from "../data/mock";
 
-// Simulation delay helper
+// ── Chat API ────────────────────────────────────────────────────────────────
+
+/**
+ * Send a user message to the AI Sales Agent.
+ * Uses credentials: "include" so the thread_id cookie is sent automatically.
+ */
+export async function sendChatMessage(message: string): Promise<ChatMessage> {
+    const res = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ message }),
+    });
+
+    if (!res.ok) {
+        throw new Error(`Chat request failed: ${res.status}`);
+    }
+
+    const data = await res.json();
+
+    return {
+        id: crypto.randomUUID(),
+        role: "assistant",
+        content: data.reply,
+        timestamp: Date.now(),
+    };
+}
+
+/**
+ * Load chat history for the current thread (based on thread_id cookie).
+ * Returns an array of ChatMessage objects.
+ */
+export async function getChatHistory(): Promise<{ threadId: string; messages: ChatMessage[] }> {
+    const res = await fetch("/api/chat/history", {
+        method: "GET",
+        credentials: "include",
+    });
+
+    if (!res.ok) {
+        throw new Error(`History request failed: ${res.status}`);
+    }
+
+    const data = await res.json();
+
+    return {
+        threadId: data.thread_id,
+        messages: (data.messages || []).map((msg: { id: string; role: string; content: string; timestamp: number }) => ({
+            id: msg.id || crypto.randomUUID(),
+            role: msg.role as "user" | "assistant",
+            content: msg.content,
+            timestamp: msg.timestamp || Date.now(),
+        })),
+    };
+}
+
+// ── Other APIs (still mock for now) ─────────────────────────────────────────
+
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export async function submitContactForm(
@@ -27,22 +82,6 @@ export async function submitContactForm(
     return {
         success: true,
         message: "Terima kasih! Tim kami akan segera menghubungi Anda.",
-    };
-}
-
-export async function sendChatMessage(
-    payload: SendMessagePayload
-): Promise<ChatMessage> {
-    // TODO: Replace with real FastAPI + LangSmith endpoint: POST /api/chat/message
-    await delay(1500 + Math.random() * 1000); // 1.5s - 2.5s simulated thinking time
-
-    const randomReply = MOCK_REPLIES[Math.floor(Math.random() * MOCK_REPLIES.length)];
-
-    return {
-        id: crypto.randomUUID(),
-        role: "assistant",
-        content: randomReply,
-        timestamp: Date.now(),
     };
 }
 
