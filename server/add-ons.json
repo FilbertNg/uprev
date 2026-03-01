@@ -1,0 +1,16 @@
+[
+    {
+        "name": "AI Concierge (Smart Chatbot)",
+        "description": "Agen CS 24/7 yang dilatih dengan data klien. Menangani FAQ, pemeriksaan harga, dan kualifikasi *lead* secara instan.",
+        "build_price": "Rp 3.500.000",
+        "maintenance_price": "Rp 899.000 / bln",
+        "migration_price": "0",
+        "best_for": [
+            "Bisnis dengan volume pertanyaan pelanggan tinggi",
+            "Perusahaan yang membutuhkan CS 24/7"
+        ],
+        "selling_sentences": [
+            "Tingkatkan konversi Anda dengan respons instan 24/7. AI Concierge kami adalah asisten virtual yang cerdas, dilatih khusus dengan data bisnis Anda untuk menangani semua pertanyaan pelanggan, membebaskan waktu tim Anda."
+        ]
+    }
+]

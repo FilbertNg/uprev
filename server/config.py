@@ -1,10 +1,4 @@
-from pydantic_settings import BaseSettings
+# This file has been superseded by core/config.py.
+# Kept for backward compatibility with api/meet.py.
 
-class Settings(BaseSettings):
-    PHONE_NUMBER: str
-    ALLOW_ORIGINS: list[str] = ["*"]
-
-    class Config:
-        env_file = ".env"
-
-settings = Settings()
+from core.config import settings  # noqa: F401

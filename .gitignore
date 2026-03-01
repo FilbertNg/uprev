@@ -12,3 +12,6 @@ wheels/
 # env
 .env
 .env.example
+
+# md
+server/product_summary.md

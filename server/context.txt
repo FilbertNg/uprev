@@ -1,0 +1,66 @@
+# ── UpRev Company Knowledge Base ──────────────────────────────────
+# This file contains UpRev's internal documentation.
+# The AI agent retrieves context from this file via semantic search to
+# answer general questions from clients.
+# Run POST /api/context/embed after any edits to re-embed.
+
+## Apa itu UpRev?
+UpRev adalah perusahaan teknologi yang membangun website berkualitas tinggi, chatbot AI, dan sistem CRM otomatis untuk bisnis. Kami berfokus pada solusi digital yang mengubah pengunjung menjadi pelanggan.
+
+## Apa saja layanan UpRev?
+UpRev menyediakan berbagai paket website mulai dari Landing Page sederhana hingga E-Commerce penuh otomatis (Toko Pro). Selain itu, kami juga menyediakan AI Concierge — agen CS virtual 24/7 yang dilatih dengan data klien.
+
+## Berapa lama waktu pengerjaan?
+Waktu pengerjaan tergantung pada paket yang dipilih:
+- Landing Page: 3–5 hari kerja
+- Company Profile: 5–7 hari kerja
+- Toko Basic: 7–10 hari kerja
+- The Showroom: 10–14 hari kerja
+- The Publisher: 14–21 hari kerja
+- Toko Pro (E-Commerce): 21–30 hari kerja
+- AI Concierge: 7–14 hari kerja (setelah data klien diterima)
+
+## Apa yang termasuk dalam biaya maintenance?
+Biaya maintenance bulanan mencakup:
+- Hosting dan domain management
+- SSL certificate renewal
+- Backup rutin (mingguan)
+- Bug fixing dan patch keamanan
+- Minor content updates (hingga 5 perubahan per bulan)
+- Monitoring uptime 24/7
+- Support via WhatsApp (jam kerja)
+
+## Apa itu biaya migrasi?
+Biaya migrasi dikenakan jika klien sudah memiliki website dari provider lain dan ingin memindahkannya ke infrastruktur UpRev. Ini mencakup:
+- Transfer konten dan data
+- Setup DNS dan domain
+- Testing dan QA setelah migrasi
+- Garansi 30 hari pasca-migrasi
+
+## Bagaimana proses kerja UpRev?
+1. Konsultasi awal (gratis) — memahami kebutuhan bisnis klien
+2. Proposal dan penawaran harga
+3. Pembayaran DP 50%
+4. Fase desain (mockup disetujui klien)
+5. Fase development
+6. Review dan revisi (hingga 2 ronde revisi gratis)
+7. Launch dan pelunasan 50%
+8. Maintenance dimulai bulan berikutnya
+
+## Metode pembayaran apa yang diterima?
+Kami menerima pembayaran melalui:
+- Transfer bank (BCA, Mandiri, BNI, BRI)
+- QRIS
+- Virtual Account
+- Kartu kredit (melalui Xendit)
+Semua pembayaran diproses secara aman melalui gateway Xendit.
+
+## Apa itu AI Concierge?
+AI Concierge adalah chatbot pintar yang dilatih khusus dengan data bisnis klien. Kemampuannya meliputi:
+- Menjawab FAQ pelanggan 24/7
+- Kualifikasi lead secara otomatis
+- Pemeriksaan harga dan ketersediaan
+- Penjadwalan meeting atau booking
+- Eskalasi ke tim manusia jika diperlukan
+
+Biaya: Rp 3.500.000 (sekali bayar untuk setup) + Rp 899.000/bulan untuk maintenance dan AI usage.

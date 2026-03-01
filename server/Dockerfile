@@ -1,4 +1,4 @@
-FROM python:3.12-slim-bookworm
+FROM python:3.13-slim-bookworm
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /bin/uv
 
 WORKDIR /app
@@ -6,15 +6,21 @@ WORKDIR /app
 # Enable bytecode compilation
 ENV UV_COMPILE_BYTECODE=1
 
-# Copy project files
+# Copy dependency files first (better layer caching)
 COPY pyproject.toml uv.lock ./
-COPY .env ./
-COPY config.py ./
-COPY main.py ./
-COPY api ./api/
 
 # Install dependencies
 RUN uv sync --frozen --no-cache
+
+# Copy application code
+COPY main.py config.py ./
+COPY core ./core/
+COPY db ./db/
+COPY agent ./agent/
+COPY api ./api/
+COPY context.txt ./
+COPY packages.json add-ons.json ./
+COPY seed_db.py ./
 
 # Expose port
 EXPOSE 8000

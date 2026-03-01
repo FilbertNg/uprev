@@ -1,0 +1,105 @@
+[
+    {
+        "name": "The Landing Page (Starter)",
+        "description": "Fokus visual, layout, konten statis. Minim teknis.",
+        "build_price": "Rp 1.500.000",
+        "maintenance_price": "Rp 900.000",
+        "migration_price": "Rp 1.000.000",
+        "best_for": [
+            "Personal Brands",
+            "UMKM",
+            "Gym Trainers"
+        ],
+        "selling_sentences": [
+            "Dapatkan situs web Anda online hanya dalam 3 hari. Desain yang fokus pada visual dan konversi tinggi menjadikannya pilihan ideal untuk produk atau layanan tunggal."
+        ]
+    },
+    {
+        "name": "Company Profile (Business)",
+        "description": "Visual dominan dengan fitur backend standar.",
+        "build_price": "Rp 3.000.000",
+        "maintenance_price": "Rp 1.000.000",
+        "migration_price": "Rp 1.500.000",
+        "best_for": [
+            "Law Firms",
+            "Clinics",
+            "Consultants"
+        ],
+        "selling_sentences": [
+            "Struktur 5 halaman profesional yang langsung membangun kredibilitas. Cocok untuk membangun kepercayaan klien dengan tampilan profesional Anda."
+        ]
+    },
+    {
+        "name": "Toko Basic (WhatsApp Store)",
+        "description": "Tampilan katalog produk, tapi *checkout* via WA (semi-manual).",
+        "build_price": "Rp 4.500.000",
+        "maintenance_price": "Rp 1.500.000",
+        "migration_price": "Rp 2.000.000",
+        "best_for": [
+            "Fashion",
+            "F&B",
+            "IG Shops"
+        ],
+        "selling_sentences": [
+            "Solusi sederhana dan bebas masalah teknis. Pelanggan dapat menjelajahi katalog produk Anda, namun proses pembelian dan chat tetap personal melalui WhatsApp."
+        ]
+    },
+    {
+        "name": "The Showroom (Project Catalog)",
+        "description": "Menampilkan portofolio dengan filter canggih (Luas Tanah, Tahun, Lokasi). Butuh database custom.",
+        "build_price": "Rp 5.500.000",
+        "maintenance_price": "Rp 1.500.000",
+        "migration_price": "Rp 2.500.000",
+        "best_for": [
+            "Contractors",
+            "Architects",
+            "Suppliers"
+        ],
+        "selling_sentences": [
+            "Sistem portofolio premium yang memungkinkan klien memfilter proyek Anda berdasarkan spesifikasi seperti Ukuran, Tahun, dan Lokasi. Tunjukkan prestise dan detail Anda."
+        ]
+    },
+    {
+        "name": "The Publisher (News & NGO)",
+        "description": "Beban desain layout dan manajemen sistem user/admin seimbang.",
+        "build_price": "Rp 7.500.000",
+        "maintenance_price": "Rp 2.500.000",
+        "migration_price": "Rp 3.000.000",
+        "best_for": [
+            "Research Centers",
+            "Schools",
+            "NGOs"
+        ],
+        "selling_sentences": [
+            "Panel admin yang kompleks memungkinkan staf Anda memposting berita, hibah PDF, dan acara dengan mudah. Solusi manajemen konten yang kuat."
+        ]
+    },
+    {
+        "name": "Toko Pro (Full Auto E-Comm)",
+        "description": "Melibatkan risiko finansial (Payment), API Logistik, Integrasi Rumit.",
+        "build_price": "Rp 8.500.000",
+        "maintenance_price": "Rp 2.500.000",
+        "migration_price": "Rp 3.500.000",
+        "best_for": [
+            "Serious Brands",
+            "Drop-shippers"
+        ],
+        "selling_sentences": [
+            "Rasakan otomatisasi penuh! Pembayaran (Xendit) dan Pengiriman (JNE) dihitung secara otomatis. Toko Anda menjual 24/7 bahkan saat Anda tidur."
+        ]
+    },
+    {
+        "name": "AI Concierge (Smart Chatbot)",
+        "description": "Agen CS 24/7 yang dilatih dengan data klien. Menangani FAQ, pemeriksaan harga, dan kualifikasi *lead* secara instan.",
+        "build_price": "Rp 3.500.000",
+        "maintenance_price": "Rp 899.000 / bln",
+        "migration_price": "0",
+        "best_for": [
+            "Bisnis dengan volume pertanyaan pelanggan tinggi",
+            "Perusahaan yang membutuhkan CS 24/7"
+        ],
+        "selling_sentences": [
+            "Tingkatkan konversi Anda dengan respons instan 24/7. AI Concierge kami adalah asisten virtual yang cerdas, dilatih khusus dengan data bisnis Anda untuk menangani semua pertanyaan pelanggan, membebaskan waktu tim Anda."
+        ]
+    }
+]
