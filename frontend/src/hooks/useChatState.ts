@@ -1,4 +1,4 @@
-import { useReducer, useEffect, useCallback } from "react";
+import { useReducer, useEffect, useCallback, useRef } from "react";
 import { ChatMessage } from "@/types";
 import { sendChatMessage, getChatHistory } from "@/lib/api";
 import { registerChatOpener, unregisterChatOpener } from "@/lib/chatOpener";
@@ -22,6 +22,10 @@ type ChatAction =
     | { type: "LOAD_HISTORY"; payload: ChatMessage[] }
     | { type: "SET_ERROR"; payload: string }
     | { type: "CLEAR_ERROR" };
+
+// Default greeting shown optimistically (must match backend DEFAULT_GREETING)
+const DEFAULT_GREETING =
+    "Halo! 👋 Saya Reva, asisten AI UpRev. Ada yang bisa saya bantu tentang layanan kami?";
 
 const initialState: ChatState = {
     isOpen: false,
@@ -70,17 +74,45 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
 
 export function useChatState() {
     const [state, dispatch] = useReducer(chatReducer, initialState);
+    // Store pending CTA greeting to append after history loads
+    const pendingGreeting = useRef<string | null>(null);
 
     // Load chat history from backend on first open
     const loadHistory = useCallback(async () => {
         if (state.historyLoaded) return;
+
+        // Optimistic UI: immediately show the default greeting
+        // so the user sees content instantly (no blank delay)
+        const optimisticGreeting: ChatMessage = {
+            id: "optimistic-greeting",
+            role: "assistant",
+            content: DEFAULT_GREETING,
+            timestamp: Date.now(),
+        };
+        dispatch({ type: "LOAD_HISTORY", payload: [optimisticGreeting] });
+
+        // Fetch real history in background and replace
         try {
             const { messages } = await getChatHistory();
-            dispatch({ type: "LOAD_HISTORY", payload: messages });
+            if (messages.length > 0) {
+                dispatch({ type: "LOAD_HISTORY", payload: messages });
+            }
+            // If messages is empty, keep the optimistic greeting
+
+            // If there's a pending CTA greeting, append it now
+            if (pendingGreeting.current) {
+                const ctaMsg: ChatMessage = {
+                    id: crypto.randomUUID(),
+                    role: "assistant",
+                    content: pendingGreeting.current,
+                    timestamp: Date.now(),
+                };
+                dispatch({ type: "RECEIVE_MESSAGE", payload: ctaMsg });
+                pendingGreeting.current = null;
+            }
         } catch (error) {
             console.error("Failed to load chat history:", error);
-            // If history fails, still mark as loaded so we don't retry endlessly
-            dispatch({ type: "LOAD_HISTORY", payload: [] });
+            // Keep the optimistic greeting on error
         }
     }, [state.historyLoaded]);
 
@@ -95,10 +127,25 @@ export function useChatState() {
     useEffect(() => {
         registerChatOpener((aiGreeting?: string) => {
             dispatch({ type: "SET_OPEN", payload: true });
-            // Greeting is now loaded from backend history, no need to locally inject
+
+            if (aiGreeting) {
+                if (state.historyLoaded) {
+                    // History already loaded — append CTA greeting immediately
+                    const ctaMsg: ChatMessage = {
+                        id: crypto.randomUUID(),
+                        role: "assistant",
+                        content: aiGreeting,
+                        timestamp: Date.now(),
+                    };
+                    dispatch({ type: "RECEIVE_MESSAGE", payload: ctaMsg });
+                } else {
+                    // History not yet loaded — store for later append
+                    pendingGreeting.current = aiGreeting;
+                }
+            }
         });
         return () => unregisterChatOpener();
-    }, []);
+    }, [state.historyLoaded]);
 
     const toggleChat = () => dispatch({ type: "TOGGLE_OPEN" });
     const openChat = () => dispatch({ type: "SET_OPEN", payload: true });

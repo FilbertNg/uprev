@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Sparkles, X } from "lucide-react";
 
 interface ChatToggleProps {

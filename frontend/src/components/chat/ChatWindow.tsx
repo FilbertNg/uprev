@@ -19,6 +19,7 @@ export function ChatWindow({ state, onSendMessage, onClose }: ChatWindowProps) {
     const { t } = useLanguage();
     const inputRef = useRef<HTMLInputElement>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
+    const windowRef = useRef<HTMLDivElement>(null);
     const isMobile = useMediaQuery("(max-width: 768px)");
 
     // Auto-scroll to bottom
@@ -35,6 +36,30 @@ export function ChatWindow({ state, onSendMessage, onClose }: ChatWindowProps) {
         }
     }, [state.isOpen, isMobile]);
 
+    // Close when clicking outside (desktop only)
+    useEffect(() => {
+        if (!state.isOpen || isMobile) return;
+
+        const handleClickOutside = (e: MouseEvent) => {
+            if (
+                windowRef.current &&
+                !windowRef.current.contains(e.target as Node)
+            ) {
+                onClose();
+            }
+        };
+
+        // Delay listener to avoid instantly closing from the toggle click
+        const timer = setTimeout(() => {
+            document.addEventListener("mousedown", handleClickOutside);
+        }, 100);
+
+        return () => {
+            clearTimeout(timer);
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [state.isOpen, isMobile, onClose]);
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!inputRef.current) return;
@@ -49,13 +74,14 @@ export function ChatWindow({ state, onSendMessage, onClose }: ChatWindowProps) {
         <AnimatePresence>
             {state.isOpen && (
                 <motion.div
+                    ref={windowRef}
                     initial={{ opacity: 0, scale: 0.95, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95, y: 20 }}
                     transition={{ type: "spring", stiffness: 300, damping: 25 }}
                     className={`fixed z-[90] flex flex-col overflow-hidden border border-[var(--color-border-light)] bg-[var(--color-carbon)]/80 backdrop-blur-lg shadow-2xl ${isMobile
                         ? "inset-0 h-[100dvh] w-full rounded-none"
-                        : "bottom-28 right-8 h-[550px] w-[380px] rounded-[20px]"
+                        : "bottom-24 right-8 h-[550px] w-[380px] rounded-[20px]"
                         }`}
                 >
                     {/* Header */}
