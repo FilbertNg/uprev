@@ -52,28 +52,56 @@ export function BentoCard({ product, className = "" }: BentoCardProps) {
             {product.mockVisual === 'wireframe' && <WebsiteVisual isHovered={isHovered} />}
 
             {/* Content */}
-            <div className="flex flex-1 flex-col p-8 md:p-10 relative z-10">
-                <h3 className="mb-4 font-display text-[28px] md:text-[32px] font-bold text-[var(--color-smoke)]">
-                    {lang === "ID" ? product.title : (product.titleEn || product.title)}
-                </h3>
-                <p className="max-w-md font-inter text-[16px] text-[var(--color-muted)]">
-                    {lang === "ID" ? product.description : (product.descriptionEn || product.description)}
-                </p>
+            {product.id === 'ai-cs' ? (
+                <div className="flex flex-1 flex-col md:flex-row lg:flex-col p-8 md:p-10 relative z-10 w-full h-full">
+                    {/* Left Column (Text) */}
+                    <div className="flex flex-col flex-1 md:max-w-[50%] lg:max-w-none z-20">
+                        <h3 className="mb-4 font-display text-[28px] md:text-[32px] font-bold text-[var(--color-smoke)]">
+                            {lang === "ID" ? product.title : (product.titleEn || product.title)}
+                        </h3>
+                        <p className="max-w-md font-inter text-[16px] text-[var(--color-muted)]">
+                            {lang === "ID" ? product.description : (product.descriptionEn || product.description)}
+                        </p>
+                    </div>
 
-                {/* Floating CTA */}
-                <div className={`mt-auto pt-8 flex items-center ${product.id === 'smart-crm' ? 'justify-start' : 'justify-end'}`}>
-                    <span className="flex items-center text-[14px] font-semibold text-[var(--color-tiger-flame)]">
-                        {t("Pelajari Fitur", "Learn Features")}
-                        <motion.div
-                            animate={{ x: isHovered ? 8 : 0 }}
-                            transition={{ duration: 0.2, ease: "easeOut" }}
-                            className="ml-2"
-                        >
-                            <ArrowRight className="h-4 w-4" />
-                        </motion.div>
-                    </span>
+                    {/* Pelajari Fitur CTA */}
+                    <div className="absolute bottom-8 right-8 md:bottom-10 md:right-10 lg:static lg:mt-auto lg:pt-8 flex items-center justify-end z-20">
+                        <span className="flex items-center text-[14px] font-semibold text-[var(--color-tiger-flame)]">
+                            {t("Pelajari Fitur", "Learn Features")}
+                            <motion.div
+                                animate={{ x: isHovered ? 8 : 0 }}
+                                transition={{ duration: 0.2, ease: "easeOut" }}
+                                className="ml-2"
+                            >
+                                <ArrowRight className="h-4 w-4" />
+                            </motion.div>
+                        </span>
+                    </div>
                 </div>
-            </div>
+            ) : (
+                <div className="flex flex-1 flex-col p-8 md:p-10 relative z-10 w-full h-full">
+                    <h3 className="mb-4 font-display text-[28px] md:text-[32px] font-bold text-[var(--color-smoke)]">
+                        {lang === "ID" ? product.title : (product.titleEn || product.title)}
+                    </h3>
+                    <p className="max-w-md font-inter text-[16px] text-[var(--color-muted)]">
+                        {lang === "ID" ? product.description : (product.descriptionEn || product.description)}
+                    </p>
+
+                    {/* Floating CTA */}
+                    <div className={`mt-auto pt-8 flex items-center ${product.id === 'smart-crm' ? 'justify-start' : 'justify-end'}`}>
+                        <span className="flex items-center text-[14px] font-semibold text-[var(--color-tiger-flame)]">
+                            {t("Pelajari Fitur", "Learn Features")}
+                            <motion.div
+                                animate={{ x: isHovered ? 8 : 0 }}
+                                transition={{ duration: 0.2, ease: "easeOut" }}
+                                className="ml-2"
+                            >
+                                <ArrowRight className="h-4 w-4" />
+                            </motion.div>
+                        </span>
+                    </div>
+                </div>
+            )}
         </Link>
     );
 }

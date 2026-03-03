@@ -9,9 +9,10 @@ import { useLanguage } from "@/contexts/LanguageContext";
 interface MobileDrawerProps {
     isOpen: boolean;
     onClose: () => void;
+    onItemClick?: (href: string) => void;
 }
 
-export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
+export function MobileDrawer({ isOpen, onClose, onItemClick }: MobileDrawerProps) {
     const { lang, t } = useLanguage();
     return (
         <AnimatePresence>
@@ -64,7 +65,14 @@ export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
                                                         <Link
                                                             key={child.id}
                                                             href={child.href}
-                                                            onClick={onClose}
+                                                            onClick={(e) => {
+                                                                if (child.href === '#contact-drawer') {
+                                                                    e.preventDefault();
+                                                                    onItemClick?.(child.href);
+                                                                } else {
+                                                                    onClose();
+                                                                }
+                                                            }}
                                                             className="text-[var(--color-muted)] hover:text-[var(--color-tiger-flame)] transition-colors"
                                                         >
                                                             {lang === "ID" ? child.labelId : child.labelEn}
@@ -76,7 +84,14 @@ export function MobileDrawer({ isOpen, onClose }: MobileDrawerProps) {
                                     ) : (
                                         <Link
                                             href={link.href}
-                                            onClick={onClose}
+                                            onClick={(e) => {
+                                                if (link.href === '#contact-drawer') {
+                                                    e.preventDefault();
+                                                    onItemClick?.(link.href);
+                                                } else {
+                                                    onClose();
+                                                }
+                                            }}
                                             className="text-lg font-bold text-[var(--color-smoke)] hover:text-[var(--color-tiger-flame)] transition-colors"
                                         >
                                             {lang === "ID" ? link.labelId : link.labelEn}

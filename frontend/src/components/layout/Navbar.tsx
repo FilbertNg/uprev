@@ -22,6 +22,7 @@ export function Navbar() {
     const handleNavItemClick = (href: string) => {
         if (href === "#contact-drawer") {
             setIsContactOpen(true);
+            setIsMobileMenuOpen(false);
         }
     };
 
@@ -52,7 +53,7 @@ export function Navbar() {
                     </Link>
 
                     {/* Desktop Nav */}
-                    <nav className="hidden md:flex absolute left-1/2 -translate-x-1/2 items-center gap-8">
+                    <nav className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center gap-2 lg:gap-8">
                         {navLinks.map((link) => (
                             <div key={link.id}>
                                 {link.children ? (
@@ -64,7 +65,7 @@ export function Navbar() {
                                 ) : (
                                     <Link
                                         href={link.href}
-                                        className="text-[14px] text-[var(--color-muted)] transition-colors duration-300 hover:text-[var(--color-smoke)]"
+                                        className="text-[12px] lg:text-[14px] text-[var(--color-muted)] transition-colors duration-300 hover:text-[var(--color-smoke)] whitespace-nowrap"
                                         data-magnetic
                                     >
                                         {lang === "ID" ? link.labelId : link.labelEn}
@@ -75,7 +76,7 @@ export function Navbar() {
                     </nav>
 
                     {/* Desktop Actions */}
-                    <div className="hidden md:flex items-center gap-6">
+                    <div className="hidden lg:flex items-center gap-2 lg:gap-6">
                         <LanguageToggle />
                         <Button size="sm" onClick={() => window.open("https://demo1.uprev.id", "_blank")}>
                             {t("Coba Demo", "Try Demo")}
@@ -84,7 +85,7 @@ export function Navbar() {
 
                     {/* Hamburger Menu (Mobile/Tablet) */}
                     <button
-                        className="md:hidden text-[var(--color-smoke)] p-2 -mr-2"
+                        className="lg:hidden text-[var(--color-smoke)] p-2 -mr-2"
                         onClick={() => setIsMobileMenuOpen(true)}
                         aria-label="Open Menu"
                     >
@@ -94,7 +95,7 @@ export function Navbar() {
             </header>
 
             {/* Mobile Menu Drawer */}
-            <MobileDrawer isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} />
+            <MobileDrawer isOpen={isMobileMenuOpen} onClose={() => setIsMobileMenuOpen(false)} onItemClick={handleNavItemClick} />
 
             {/* Contact Drawer */}
             <ContactDrawer isOpen={isContactOpen} onClose={() => setIsContactOpen(false)} />

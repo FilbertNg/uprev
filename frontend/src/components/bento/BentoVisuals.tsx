@@ -40,7 +40,7 @@ export function AICSVisual({ isHovered }: { isHovered: boolean }) {
             <div className="absolute inset-0 opacity-[0.1]" style={{ backgroundImage: "linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
 
             {/* Network Viewport */}
-            <div className="absolute bottom-24 left-1/2 -translate-x-1/2 w-[96%] max-w-[500px] aspect-50/33 flex items-center justify-center">
+            <div className="absolute bottom-3 left-4 md:bottom-auto md:left-auto md:top-1/2 md:right-8 md:-translate-y-1/2 lg:bottom-24 lg:top-auto lg:right-auto lg:left-1/2 lg:-translate-x-1/2 lg:translate-y-0 w-[750px] sm:w-[900px] md:w-[440px] lg:w-[500px] aspect-[75/30] sm:aspect-[90/30] md:aspect-[44/30] lg:aspect-[50/33] flex items-center justify-center scale-[0.28] sm:scale-[0.35] md:scale-[0.7] lg:scale-100 origin-bottom-left md:origin-right lg:origin-bottom">
 
                 {/* Lines SVG */}
                 <svg className="absolute inset-0 w-full h-full" viewBox="0 0 440 300" preserveAspectRatio="none">
