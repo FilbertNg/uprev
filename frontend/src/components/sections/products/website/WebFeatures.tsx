@@ -171,7 +171,7 @@ function ScoreAnimation() {
             repeat: Infinity,
             repeatDelay: 2,
           }}
-          style={{ dropShadow: "0 0 10px rgba(16,185,129,0.5)" }}
+          style={{ filter: "drop-shadow(0 0 10px rgba(16,185,129,0.5))" }}
         />
       </svg>
       {/* Number */}
@@ -231,14 +231,14 @@ function RippleClickAnimation() {
               animate={
                 clickToggle
                   ? {
-                      scale: [1, 0.95, 1],
-                      boxShadow: [
-                        "0 0 0px rgba(255,87,34,0)",
-                        "0 0 15px rgba(255,87,34,0.6)",
-                        "0 0 0px rgba(255,87,34,0)",
-                      ],
-                      transition: { delay: 0.8, duration: 0.5 },
-                    }
+                    scale: [1, 0.95, 1],
+                    boxShadow: [
+                      "0 0 0px rgba(255,87,34,0)",
+                      "0 0 15px rgba(255,87,34,0.6)",
+                      "0 0 0px rgba(255,87,34,0)",
+                    ],
+                    transition: { delay: 0.8, duration: 0.5 },
+                  }
                   : { scale: 1, boxShadow: "0 0 0px rgba(255,87,34,0)" }
               }
               className="w-1/2 bg-tiger-flame px-2 py-2 rounded-[6px] font-display font-bold text-white text-[9px] shadow-lg relative overflow-hidden flex items-center justify-center"
@@ -273,9 +273,9 @@ function RippleClickAnimation() {
             animate={
               clickToggle
                 ? {
-                    scale: [1, 0.8, 1],
-                    transition: { delay: 1, duration: 0.3 },
-                  }
+                  scale: [1, 0.8, 1],
+                  transition: { delay: 1, duration: 0.3 },
+                }
                 : { scale: 1 }
             }
             width="24"
