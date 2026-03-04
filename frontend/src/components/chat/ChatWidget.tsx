@@ -14,10 +14,12 @@ export function ChatWidget() {
                 onSendMessage={sendMessage}
                 onClose={toggleChat}
             />
-            <ChatToggle
-                isOpen={state.isOpen}
-                onClick={toggleChat}
-            />
+            {!state.isOpen && (
+                <ChatToggle
+                    isOpen={state.isOpen}
+                    onClick={toggleChat}
+                />
+            )}
         </>
     );
 }

@@ -25,7 +25,7 @@ type ChatAction =
 
 // Default greeting shown optimistically (must match backend DEFAULT_GREETING)
 const DEFAULT_GREETING =
-    "Halo! 👋 Saya Reva, asisten AI UpRev. Ada yang bisa saya bantu tentang layanan kami?";
+    "Halo! 👋 Saya Rev, asisten AI UpRev. Ada yang bisa saya bantu tentang layanan kami?";
 
 const initialState: ChatState = {
     isOpen: false,
