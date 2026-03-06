@@ -8,6 +8,8 @@ services:
     environment:
       - NEXT_PUBLIC_API_URL=http://backend2:8000
     restart: unless-stopped
+    networks:
+      - stargaze-network
 
   backend2:
     build:
@@ -21,6 +23,8 @@ services:
       db2:
         condition: service_healthy
     restart: unless-stopped
+    networks:
+      - stargaze-network
 
   db2:
     image: pgvector/pgvector:pg17
@@ -36,6 +40,8 @@ services:
       timeout: 5s
       retries: 5
     restart: unless-stopped
+    networks:
+      - stargaze-network
 
 volumes:
   pgdata:
