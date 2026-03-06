@@ -1,33 +1,36 @@
 services:
-  frontend2:
+  frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        - NEXT_PUBLIC_API_URL=http://backend2:8000
+        - NEXT_PUBLIC_API_URL=http://backend:8000
+    container_name: frontend2
     environment:
-      - NEXT_PUBLIC_API_URL=http://backend2:8000
+      - NEXT_PUBLIC_API_URL=http://backend:8000
     restart: unless-stopped
     networks:
       - stargaze-network
 
-  backend2:
+  backend:
     build:
       context: ./server
       dockerfile: Dockerfile
+    container_name: backend2
     env_file:
       - server/.env
     environment:
       - DATABASE_URL=postgresql+asyncpg://postgres:postgres@db:5432/uprev_main_db
     depends_on:
-      db2:
+      db:
         condition: service_healthy
     restart: unless-stopped
     networks:
       - stargaze-network
 
-  db2:
+  db:
     image: pgvector/pgvector:pg17
+    container_name: db2
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
