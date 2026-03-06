@@ -43,10 +43,10 @@ export const metadata: Metadata = {
     siteName: "UpRev",
     images: [
       {
-        url: "/favicon/web-app-manifest-512x512.png",
-        width: 512,
-        height: 512,
-        alt: "UpRev Logo",
+        url: "/favicon/social-preview-uprev-1200x630.png",
+        width: 1200,
+        height: 630,
+        alt: "UpRev Dashboard Preview",
       },
     ],
     locale: "id_ID",
