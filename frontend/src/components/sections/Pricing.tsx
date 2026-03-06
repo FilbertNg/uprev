@@ -20,7 +20,7 @@ export function Pricing() {
                 <p className="max-w-[600px] font-inter text-[16px] text-[var(--color-muted)]">
                     {t("Sebuah investasi terukur. Sistem kami dirancang untuk membayar dirinya sendiri melalui penghematan operasional dan peningkatan profit.", "A measurable investment. Our system is designed to pay for itself through operational cost reduction and increased revenue.")}
                 </p>
-                <p className="max-w-[500px] font-inter text-[12px] text-[var(--color-muted)]/60 italic">
+                <p className="max-w-[500px] font-inter text-[12px] text-[var(--color-muted)]/70 italic">
                     {t("*Belum termasuk biaya maintenance yang disesuaikan dengan kebutuhan bisnis Anda.", "*Excludes maintenance fees tailored to your business needs.")}
                 </p>
             </div>

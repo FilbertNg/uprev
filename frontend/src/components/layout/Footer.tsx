@@ -58,13 +58,13 @@ export function Footer({ hideCTA = false }: { hideCTA?: boolean }) {
                         </Link>
                         <p className="text-[13px] text-[#A3A3A3] leading-relaxed">{t("Mitra transformasi digital Anda. Automasi bisnis dengan kekuatan AI.", "Your digital transformation partner. Automate business with AI.")}</p>
                         <div className="flex items-center gap-4">
-                            <a href="#" className="text-[#A3A3A3] hover:text-[#F5F5F5] hover:scale-110 transition-all">
+                            <a href="#" className="text-[#A3A3A3] hover:text-[#F5F5F5] hover:scale-110 transition-all" aria-label="Visit our X page">
                                 <Twitter className="w-5 h-5" />
                             </a>
-                            <a href="#" className="text-[#A3A3A3] hover:text-[#F5F5F5] hover:scale-110 transition-all">
+                            <a href="#" className="text-[#A3A3A3] hover:text-[#F5F5F5] hover:scale-110 transition-all" aria-label="Visit our Instagram page">
                                 <Instagram className="w-5 h-5" />
                             </a>
-                            <a href="#" className="text-[#A3A3A3] hover:text-[#F5F5F5] hover:scale-110 transition-all">
+                            <a href="#" className="text-[#A3A3A3] hover:text-[#F5F5F5] hover:scale-110 transition-all" aria-label="Visit our LinkedIn page">
                                 <Linkedin className="w-5 h-5" />
                             </a>
                         </div>
@@ -72,7 +72,7 @@ export function Footer({ hideCTA = false }: { hideCTA?: boolean }) {
 
                     {/* Column 2: Produk */}
                     <div className="flex flex-col gap-4">
-                        <h4 className="text-white text-[14px] font-bold">{t("Produk", "Products")}</h4>
+                        <p className="text-white text-[14px] font-bold">{t("Produk", "Products")}</p>
                         <Link href="/products/ai-cs" className="text-[14px] text-[#A3A3A3] hover:text-[#F5F5F5] transition-colors">{t("Intelligent AI CS", "Intelligent AI CS")}</Link>
                         <Link href="/products/smart-crm" className="text-[14px] text-[#A3A3A3] hover:text-[#F5F5F5] transition-colors">{t("Automated Smart CRM", "Automated Smart CRM")}</Link>
                         <Link href="/products/website" className="text-[14px] text-[#A3A3A3] hover:text-[#F5F5F5] transition-colors">{t("High-Performance Website", "High-Performance Website")}</Link>
@@ -81,7 +81,7 @@ export function Footer({ hideCTA = false }: { hideCTA?: boolean }) {
 
                     {/* Column 3: Perusahaan */}
                     <div className="flex flex-col gap-4">
-                        <h4 className="text-white text-[14px] font-bold">{t("Perusahaan", "Company")}</h4>
+                        <p className="text-white text-[14px] font-bold">{t("Perusahaan", "Company")}</p>
                         <Link href="/about" className="text-[14px] text-[#A3A3A3] hover:text-[#F5F5F5] transition-colors">{t("Tentang Kami", "About Us")}</Link>
                         <Link href="/team" className="text-[14px] text-[#A3A3A3] hover:text-[#F5F5F5] transition-colors">{t("Tim Kami", "Our Team")}</Link>
                         <Link href="/careers" className="text-[14px] text-[#A3A3A3] hover:text-[#F5F5F5] transition-colors">{t("Karir & Kolaborasi", "Careers & Partners")}</Link>
@@ -90,7 +90,7 @@ export function Footer({ hideCTA = false }: { hideCTA?: boolean }) {
 
                     {/* Column 4: Resources */}
                     <div className="flex flex-col gap-4">
-                        <h4 className="text-white text-[14px] font-bold">{t("Resources", "Resources")}</h4>
+                        <p className="text-white text-[14px] font-bold">{t("Resources", "Resources")}</p>
                         <a href="https://demo1.uprev.id" target="_blank" rel="noopener noreferrer" className="text-[14px] text-[#A3A3A3] hover:text-[#F5F5F5] transition-colors">{t("Live Demo", "Live Demo")}</a>
                         <Link href="/404" className="text-[14px] text-[#A3A3A3] hover:text-[#F5F5F5] transition-colors">{t("Blog & Insights", "Blog & Insights")}</Link>
                         <Link href="/404" className="text-[14px] text-[#A3A3A3] hover:text-[#F5F5F5] transition-colors">{t("Dokumentasi / FAQ", "Documentation / FAQ")}</Link>

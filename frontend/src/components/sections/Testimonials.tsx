@@ -46,7 +46,7 @@ export function Testimonials() {
 
                             <div className="relative z-10 flex items-center justify-between border-t border-[#E5E5E5] pt-6">
                                 <div>
-                                    <h4 className="font-bold text-[#1A1A1A] text-[14px]">{item.authorName}</h4>
+                                    <p className="font-bold text-[#1A1A1A] text-[14px]">{item.authorName}</p>
                                     <p className="text-[#A3A3A3] text-[12px]">{item.authorTitle}</p>
                                 </div>
                                 <div className="text-2xl">{item.countryFlag}</div>

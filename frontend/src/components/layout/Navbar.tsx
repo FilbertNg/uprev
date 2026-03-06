@@ -53,26 +53,28 @@ export function Navbar() {
                     </Link>
 
                     {/* Desktop Nav */}
-                    <nav className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center gap-2 lg:gap-8">
-                        {navLinks.map((link) => (
-                            <div key={link.id}>
-                                {link.children ? (
-                                    <NavDropdown
-                                        label={lang === "ID" ? link.labelId : link.labelEn}
-                                        items={link.children}
-                                        onItemClick={handleNavItemClick}
-                                    />
-                                ) : (
-                                    <Link
-                                        href={link.href}
-                                        className="text-[12px] lg:text-[14px] text-[var(--color-muted)] transition-colors duration-300 hover:text-[var(--color-smoke)] whitespace-nowrap"
-                                        data-magnetic
-                                    >
-                                        {lang === "ID" ? link.labelId : link.labelEn}
-                                    </Link>
-                                )}
-                            </div>
-                        ))}
+                    <nav className="hidden lg:flex absolute left-1/2 -translate-x-1/2 items-center" aria-label="Main navigation">
+                        <ul className="flex items-center gap-2 lg:gap-8 m-0 p-0 list-none">
+                            {navLinks.map((link) => (
+                                <li key={link.id}>
+                                    {link.children ? (
+                                        <NavDropdown
+                                            label={lang === "ID" ? link.labelId : link.labelEn}
+                                            items={link.children}
+                                            onItemClick={handleNavItemClick}
+                                        />
+                                    ) : (
+                                        <Link
+                                            href={link.href}
+                                            className="text-[12px] lg:text-[14px] text-[var(--color-muted)] transition-colors duration-300 hover:text-[var(--color-smoke)] whitespace-nowrap"
+                                            data-magnetic
+                                        >
+                                            {lang === "ID" ? link.labelId : link.labelEn}
+                                        </Link>
+                                    )}
+                                </li>
+                            ))}
+                        </ul>
                     </nav>
 
                     {/* Desktop Actions */}
@@ -88,6 +90,8 @@ export function Navbar() {
                         className="lg:hidden text-[var(--color-smoke)] p-2 -mr-2"
                         onClick={() => setIsMobileMenuOpen(true)}
                         aria-label="Open Menu"
+                        aria-expanded={isMobileMenuOpen}
+                        aria-controls="mobile-drawer"
                     >
                         <Menu className="h-6 w-6" />
                     </button>
