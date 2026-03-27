@@ -13,12 +13,15 @@ import { testimonials, products } from "../data/mock";
  * Send a user message to the AI Sales Agent.
  * Uses credentials: "include" so the thread_id cookie is sent automatically.
  */
-export async function sendChatMessage(message: string): Promise<ChatMessage> {
+export async function sendChatMessage(message: string, aiGreeting?: string): Promise<ChatMessage> {
+    const body: Record<string, string> = { message };
+    if (aiGreeting) body.ai_greeting = aiGreeting;
+
     const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ message }),
+        body: JSON.stringify(body),
     });
 
     if (!res.ok) {

@@ -206,8 +206,8 @@ export function ChatWindow({ state, onSendMessage, onClose }: ChatWindowProps) {
                     exit={{ opacity: 0, scale: 0.95, y: 20 }}
                     transition={{ type: "spring", stiffness: 300, damping: 25 }}
                     className={`fixed z-[90] flex flex-col overflow-hidden border border-[var(--color-border-light)] bg-[var(--color-carbon)] backdrop-blur-lg shadow-2xl ${isMobile
-                            ? "rounded-none"
-                            : "bottom-24 right-8 h-[550px] w-[380px] rounded-[20px]"
+                        ? "rounded-none"
+                        : "bottom-24 right-8 h-[550px] w-[380px] rounded-[20px]"
                         }`}
                     style={mobileStyle}
                 >
@@ -243,9 +243,30 @@ export function ChatWindow({ state, onSendMessage, onClose }: ChatWindowProps) {
                         className="flex-1 overflow-y-auto p-4 flex flex-col gap-3 overscroll-contain"
                         style={{ WebkitOverflowScrolling: "touch" }}
                     >
-                        {state.messages.map((msg) => (
-                            <ChatBubble key={msg.id} message={msg} />
-                        ))}
+                        {state.messages.flatMap((msg) => {
+                            if (msg.role === "user") {
+                                return [<ChatBubble key={msg.id} message={msg} />];
+                            }
+
+                            // Split assistant message by blank lines into separate bubbles
+                            const blocks = msg.content
+                                .split(/\n{2,}/)
+                                .map((b) => b.trim())
+                                .filter(Boolean);
+
+                            if (blocks.length <= 1) {
+                                return [<ChatBubble key={msg.id} message={msg} />];
+                            }
+
+                            return blocks.map((block, idx) => (
+                                <ChatBubble
+                                    key={`${msg.id}-${idx}`}
+                                    message={{ ...msg, id: `${msg.id}-${idx}`, content: block }}
+                                    // Only stagger delay for live-received messages, not history
+                                    delay={msg.isNew ? idx * 1 : 0}
+                                />
+                            ));
+                        })}
 
                         {state.status === "typing" && (
                             <div className="flex w-full justify-start">

@@ -124,16 +124,12 @@ async def get_chat_history(
                             })
                 return {"thread_id": thread_id, "messages": messages}
 
-            # No history — seed the greeting into LangGraph state
-            await graph.ainvoke(
-                {
-                    "messages": [AIMessage(content=DEFAULT_GREETING)],
-                    "customer_profile": {},
-                    "agent_stage": "consulting",
-                    "selected_package": None,
-                    "selected_addons": [],
-                },
+            # No history — seed the greeting into LangGraph state WITHOUT
+            # invoking the graph (aupdate_state writes to the checkpoint only;
+            # ainvoke would run the full agent and trigger an LLM call).
+            await graph.aupdate_state(
                 config,
+                {"messages": [AIMessage(content=DEFAULT_GREETING)]},
             )
 
             return {
@@ -193,9 +189,18 @@ async def chat(
 
             config = {"configurable": {"thread_id": thread_id}}
 
+            # Build message list — if this is the user's first message and a
+            # CTA greeting was shown, prepend it so LangChain sees:
+            #   AI: aiGreeting
+            #   Human: user_message
+            messages_to_send: list = []
+            if payload.ai_greeting:
+                messages_to_send.append(AIMessage(content=payload.ai_greeting))
+            messages_to_send.append({"role": "user", "content": user_message})
+
             result = await graph.ainvoke(
                 {
-                    "messages": [{"role": "user", "content": user_message}],
+                    "messages": messages_to_send,
                     "customer_profile": {},
                 },
                 config,

@@ -89,6 +89,7 @@ class TransactionResponse(BaseModel):
 class ChatRequest(BaseModel):
     message: str = Field(..., min_length=1)
     template_key: str | None = None  # Optional frontend button template
+    ai_greeting: str | None = None  # Prepended as AI context on first message only
 
 
 class ChatResponse(BaseModel):

@@ -56,6 +56,8 @@ export interface ChatMessage {
     role: ChatRole;
     content: string;
     timestamp: number;
+    /** True only for messages received live (not loaded from history) */
+    isNew?: boolean;
 }
 
 export interface ContactFormPayload {

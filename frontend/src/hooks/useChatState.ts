@@ -74,8 +74,10 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
 
 export function useChatState() {
     const [state, dispatch] = useReducer(chatReducer, initialState);
-    // Store pending CTA greeting to append after history loads
+    // Holds the CTA aiGreeting to display immediately and send as context on first message
     const pendingGreeting = useRef<string | null>(null);
+    // True until the user has sent at least one real message (or real history loaded)
+    const isFirstMessage = useRef<boolean>(true);
 
     // Load chat history from backend on first open
     const loadHistory = useCallback(async () => {
@@ -94,22 +96,16 @@ export function useChatState() {
         // Fetch real history in background and replace
         try {
             const { messages } = await getChatHistory();
+            // If messages is empty, keep the optimistic greeting and isFirstMessage stays true
             if (messages.length > 0) {
                 dispatch({ type: "LOAD_HISTORY", payload: messages });
-            }
-            // If messages is empty, keep the optimistic greeting
-
-            // If there's a pending CTA greeting, append it now
-            if (pendingGreeting.current) {
-                const ctaMsg: ChatMessage = {
-                    id: crypto.randomUUID(),
-                    role: "assistant",
-                    content: pendingGreeting.current,
-                    timestamp: Date.now(),
-                };
-                dispatch({ type: "RECEIVE_MESSAGE", payload: ctaMsg });
+                // Real conversation history exists — not a first-time user
+                isFirstMessage.current = false;
                 pendingGreeting.current = null;
             }
+
+            // Note: if messages is empty, pendingGreeting stays set so it gets
+            // forwarded to the backend on the user's first send.
         } catch (error) {
             console.error("Failed to load chat history:", error);
             // Keep the optimistic greeting on error
@@ -129,17 +125,18 @@ export function useChatState() {
             dispatch({ type: "SET_OPEN", payload: true });
 
             if (aiGreeting) {
-                if (state.historyLoaded) {
-                    // History already loaded — append CTA greeting immediately
-                    const ctaMsg: ChatMessage = {
-                        id: crypto.randomUUID(),
-                        role: "assistant",
-                        content: aiGreeting,
-                        timestamp: Date.now(),
-                    };
-                    dispatch({ type: "RECEIVE_MESSAGE", payload: ctaMsg });
-                } else {
-                    // History not yet loaded — store for later append
+                // Show the greeting immediately in the UI
+                const ctaMsg: ChatMessage = {
+                    id: crypto.randomUUID(),
+                    role: "assistant",
+                    content: aiGreeting,
+                    timestamp: Date.now(),
+                    isNew: true,
+                };
+                dispatch({ type: "RECEIVE_MESSAGE", payload: ctaMsg });
+                // Also store it so it can be forwarded to the backend as context
+                // on the user's first message (if no real history exists)
+                if (isFirstMessage.current) {
                     pendingGreeting.current = aiGreeting;
                 }
             }
@@ -167,9 +164,15 @@ export function useChatState() {
             dispatch({ type: "SET_TYPING" });
         }, 300);
 
+        // On the very first message, pass the aiGreeting to the backend so
+        // LangChain sees: AI: greeting → Human: message
+        const greetingForBackend = isFirstMessage.current ? (pendingGreeting.current ?? undefined) : undefined;
+        isFirstMessage.current = false;
+        pendingGreeting.current = null;
+
         try {
-            const reply = await sendChatMessage(text);
-            dispatch({ type: "RECEIVE_MESSAGE", payload: reply });
+            const reply = await sendChatMessage(text, greetingForBackend);
+            dispatch({ type: "RECEIVE_MESSAGE", payload: { ...reply, isNew: true } });
         } catch (error) {
             dispatch({ type: "SET_ERROR", payload: "Koneksi terputus. Silakan coba lagi." });
         }
