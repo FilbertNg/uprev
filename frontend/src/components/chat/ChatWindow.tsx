@@ -114,7 +114,19 @@ export function ChatWindow({ state, onSendMessage, onClose }: ChatWindowProps) {
     // Auto-scroll messages to bottom
     useEffect(() => {
         if (scrollRef.current) {
+            // Scroll immediately
             scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+
+            // Also scroll again after a short delay to catch staggered bubbles appearing
+            const timer = setTimeout(() => {
+                if (scrollRef.current) {
+                    scrollRef.current.scrollTo({
+                        top: scrollRef.current.scrollHeight,
+                        behavior: 'smooth'
+                    });
+                }
+            }, 100);
+            return () => clearTimeout(timer);
         }
     }, [state.messages, state.status]);
 
