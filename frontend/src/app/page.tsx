@@ -16,9 +16,9 @@ export default function Home() {
         <HeroSection />
         <ProblemTimeline />
         <BentoGrid />
-        <DemoShowcase />
+        {/*<DemoShowcase />*/}
         <Testimonials />
-        <Pricing />
+        {/*<Pricing />*/}
       </main>
 
       <Footer />
